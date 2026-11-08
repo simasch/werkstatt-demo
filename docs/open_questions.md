@@ -75,10 +75,13 @@ a gap between any two bookings of a room.
 **Element:** UC-002 BR-001
 **Raised by:** /use-case-spec, 2026-11-08
 **Blocking:** No
-**Status:** Open
+**Status:** Answered
 **Assumed:** No restriction; a booking may be made for a past, present, or future time slot, since neither
 FR-004/FR-005 nor the entity model restricts it.
 
 Neither the requirements nor the entity model say whether a booking's start time must be in the present or future.
 Readings: (a) no restriction, keeping the use case as small as the sources describe; (b) the system rejects a start
 time in the past, which would need a new business rule and alternative flow not grounded in any current source.
+
+**Answer:** Confirmed
+**Answered by:** Simon Martinelli, 2026-11-08

@@ -1,0 +1,16 @@
+@startuml Use Cases Overview
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Office Manager" as manager
+actor "Employee" as employee
+
+rectangle "Room Booking" {
+    usecase "UC-001\nRegister Room" as UC001
+    usecase "UC-002\nBook Room" as UC002
+}
+
+manager --> UC001
+employee --> UC002
+
+@enduml

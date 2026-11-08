@@ -1,0 +1,23 @@
+name: AI Unified Process Werkstatt
+on:
+  workflow_dispatch:
+    inputs:
+      use_cases:
+        description: Use case ids (empty = every Approved use case of the change)
+        required: false
+      correlation_id:
+        description: Run id
+        required: false
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  werkstatt:
+    uses: AI-Unified-Process/marketplace/.github/workflows/aiup-werkstatt.yml@change/werkstatt
+    with:
+      use_cases: ${{ inputs.use_cases }}
+      correlation_id: ${{ inputs.correlation_id || github.run_id }}
+      engine_ref: change/werkstatt
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

@@ -17,7 +17,7 @@ found as at the door; (b) by capacity, so the room for a group is found quickly;
 
 ## OQ-002: Which wording do the field errors and the empty-overview note use?
 
-**Element:** UC-001 A1, A2, A3
+**Element:** UC-001
 **Raised by:** /vaadin-flow-ui-test, 2026-11-08
 **Blocking:** No
 **Status:** Open
@@ -43,7 +43,7 @@ free time slots it still has.
 
 ## OQ-004: Which wording do the field errors, the overlap message, and the empty-room-list note use?
 
-**Element:** UC-002 A1, A2, A3
+**Element:** UC-002
 **Raised by:** /use-case-spec, 2026-11-08
 **Blocking:** No
 **Status:** Open
@@ -69,7 +69,7 @@ a gap between any two bookings of a room.
 
 ## OQ-006: May an employee book a room for a time slot that starts in the past?
 
-**Element:** UC-002 (scope)
+**Element:** UC-002 BR-001
 **Raised by:** /use-case-spec, 2026-11-08
 **Blocking:** No
 **Status:** Open

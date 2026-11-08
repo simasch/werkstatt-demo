@@ -3,6 +3,7 @@ package ai.unifiedprocess.roombooking.room.domain;
 import static ai.unifiedprocess.roombooking.database.Tables.ROOM;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.jooq.DSLContext;
 import org.jooq.Records;
@@ -25,6 +26,18 @@ public class RoomRepository {
                 .from(ROOM)
                 .orderBy(ROOM.NAME.lower(), ROOM.NAME, ROOM.ID)
                 .fetch(Records.mapping(Room::new));
+    }
+
+    /**
+     * The room with the id, locked until the end of the transaction so that writes concerning the room are
+     * serialized; empty when no such room exists.
+     */
+    public Optional<Room> findByIdForUpdate(long id) {
+        return ctx.select(ROOM.ID, ROOM.NAME, ROOM.CAPACITY, ROOM.EQUIPMENT)
+                .from(ROOM)
+                .where(ROOM.ID.eq(id))
+                .forUpdate()
+                .fetchOptional(Records.mapping(Room::new));
     }
 
     // UC-001 BR-002: Room names are compared without regard to upper and lower case.

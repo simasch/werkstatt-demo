@@ -1,8 +1,10 @@
-# AI Unified Process Studio - Werkstatt.
+# AI Unified Process Werkstatt - the stub of a project repository.
 #
-# This file is created by the AI Unified Process Studio during the setup and should not be
-# edited by hand - the Studio compares it against its template and offers the update when
-# the two differ.
+# The source of this file is pipelines/werkstatt/aiup-werkstatt-stub.yml in the AI Unified
+# Process marketplace. The Studio ships a verbatim copy, writes it to
+# .github/workflows/aiup-werkstatt.yml during the setup, compares the file of a change branch
+# against it before a Werkstatt run, and offers the update when the two differ. Do not edit
+# it by hand in a project; change it in the marketplace and copy it to the Studio.
 #
 # The Werkstatt builds the Approved use cases of a change branch: spec lint, implementation,
 # tests, build, spec coverage audit and fix rounds, each agent step in its own session. The

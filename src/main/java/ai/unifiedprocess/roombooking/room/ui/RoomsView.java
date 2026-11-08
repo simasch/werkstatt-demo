@@ -58,15 +58,26 @@ public class RoomsView extends VerticalLayout {
         TextField nameField = new TextField("Name");
         nameField.setMaxLength(50);
         nameField.setId("room-name-field");
+        // UC-001 BR-001: the component's own constraint message replaces the Binder's Bean
+        // Validation message when the value exceeds maxLength, so it must say the same thing.
+        nameField.setI18n(new TextField.TextFieldI18n()
+                .setMaxLengthErrorMessage("Name must be at most 50 characters."));
 
         IntegerField capacityField = new IntegerField("Capacity");
         capacityField.setMin(1);
         capacityField.setMax(50);
         capacityField.setId("room-capacity-field");
+        // UC-001 BR-003: see the comment on nameField's i18n above.
+        capacityField.setI18n(new IntegerField.IntegerFieldI18n()
+                .setMinErrorMessage("Capacity must be between 1 and 50.")
+                .setMaxErrorMessage("Capacity must be between 1 and 50."));
 
         TextField equipmentField = new TextField("Equipment");
         equipmentField.setMaxLength(200);
         equipmentField.setId("room-equipment-field");
+        // UC-001 BR-004: see the comment on nameField's i18n above.
+        equipmentField.setI18n(new TextField.TextFieldI18n()
+                .setMaxLengthErrorMessage("Equipment must be at most 200 characters."));
 
         BeanValidationBinder<RegisterRoom> binder = new BeanValidationBinder<>(RegisterRoom.class);
         binder.forField(nameField).bind("name");

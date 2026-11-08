@@ -7,7 +7,7 @@
 **Primary Actor:** Office Manager  
 **Goal:** Register a meeting room with its name, capacity, and equipment so that employees can see and book it.  
 **Trigger:** The office manager wants to add a meeting room to the room list.  
-**Status:** Approved  
+**Status:** Tested  
 
 **Requirements:** [FR-001, FR-002, FR-003, NFR-001](../requirements.md)  
 **Layers:** UI

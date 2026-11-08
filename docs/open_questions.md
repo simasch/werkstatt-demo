@@ -9,11 +9,14 @@ history.
 **Element:** UC-001 step 2
 **Raised by:** /use-case-spec, 2026-11-08
 **Blocking:** No
-**Status:** Open
+**Status:** Answered
 **Assumed:** Ordered by name, alphabetically.
 
 FR-003 asks for every room with its capacity and equipment but names no order. Readings: (a) by name, so a room is
 found as at the door; (b) by capacity, so the room for a group is found quickly; (c) in the order of registration.
+
+**Answer:** Confirmed
+**Answered by:** Simon Martinelli, 2026-11-08
 
 ## OQ-002: Which wording do the field errors and the empty-overview note use?
 

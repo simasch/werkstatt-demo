@@ -5,6 +5,8 @@ import java.util.Map;
 
 import ai.unifiedprocess.roombooking.TestcontainersConfiguration;
 import ai.unifiedprocess.roombooking.room.domain.RoomListItem;
+import ai.unifiedprocess.roombooking.room.service.RegisterRoom;
+import ai.unifiedprocess.roombooking.room.service.RoomNameTakenException;
 import ai.unifiedprocess.roombooking.usecase.UseCase;
 import com.vaadin.browserless.SpringBrowserlessTest;
 import com.vaadin.flow.component.button.Button;
@@ -175,8 +177,8 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
 
         Grid<RoomListItem> grid = grid();
         assertThat(test(grid).size()).isZero();
-        // OQ-002: the specification gives no wording for the note
-        assertThat(grid.getEmptyStateText()).isNotBlank();
+        // A1 step 1: the note says that no room is registered yet
+        assertThat(grid.getEmptyStateText()).isEqualTo(RegisterRoomView.NO_ROOM_YET);
         // A1 step 2: the use case continues at step 3
         openForm();
         assertThat(find(Dialog.class).exists()).isTrue();
@@ -193,7 +195,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm("", 12, "projector");
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RegisterRoom.NAME_REQUIRED);
         assertThat(capacityField().isInvalid()).isFalse();
         assertThat(equipmentField().isInvalid()).isFalse();
         assertEntriesKept("", 12, "projector");
@@ -209,7 +211,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm("    ", 12, "");
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RegisterRoom.NAME_REQUIRED);
         assertThat(capacityField().isInvalid()).isFalse();
         assertEntriesKept("    ", 12, "");
         assertNothingStored();
@@ -224,7 +226,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(NEW_NAME, null, "whiteboard");
         save();
 
-        assertRejectedAt(capacityField());
+        assertRejectedAt(capacityField(), RegisterRoom.CAPACITY_REQUIRED);
         assertThat(nameField().isInvalid()).isFalse();
         assertEntriesKept(NEW_NAME, null, "whiteboard");
         assertNothingStored();
@@ -239,7 +241,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(NEW_NAME, 0, "whiteboard");
         save();
 
-        assertRejectedAt(capacityField());
+        assertRejectedAt(capacityField(), RegisterRoom.CAPACITY_OUT_OF_RANGE);
         assertThat(nameField().isInvalid()).isFalse();
         assertEntriesKept(NEW_NAME, 0, "whiteboard");
         assertNothingStored();
@@ -254,7 +256,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(NEW_NAME, 51, "whiteboard");
         save();
 
-        assertRejectedAt(capacityField());
+        assertRejectedAt(capacityField(), RegisterRoom.CAPACITY_OUT_OF_RANGE);
         assertThat(nameField().isInvalid()).isFalse();
         assertEntriesKept(NEW_NAME, 51, "whiteboard");
         assertNothingStored();
@@ -270,7 +272,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(name, 10, "whiteboard");
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RegisterRoom.NAME_TOO_LONG);
         assertThat(capacityField().isInvalid()).isFalse();
         assertEntriesKept(name, 10, "whiteboard");
         assertNothingStored();
@@ -286,7 +288,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(NEW_NAME, 10, equipment);
         save();
 
-        assertRejectedAt(equipmentField());
+        assertRejectedAt(equipmentField(), RegisterRoom.EQUIPMENT_TOO_LONG);
         assertThat(nameField().isInvalid()).isFalse();
         assertThat(capacityField().isInvalid()).isFalse();
         assertEntriesKept(NEW_NAME, 10, equipment);
@@ -303,8 +305,8 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         save();
 
         // A2 step 1: the system reports at each offending field
-        assertRejectedAt(nameField());
-        assertRejectedAt(capacityField());
+        assertRejectedAt(nameField(), RegisterRoom.NAME_REQUIRED);
+        assertRejectedAt(capacityField(), RegisterRoom.CAPACITY_OUT_OF_RANGE);
         assertThat(equipmentField().isInvalid()).isFalse();
         assertEntriesKept("", 99, "projector");
         assertNothingStored();
@@ -317,7 +319,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         navigate(RegisterRoomView.class);
         fillForm("", 12, "projector");
         save();
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RegisterRoom.NAME_REQUIRED);
 
         // A2 step 3: the use case continues at step 5
         test(nameField()).setValue(NEW_NAME);
@@ -339,7 +341,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm("Lakeview", 30, "UC001 beamer");
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RoomNameTakenException.MESSAGE);
         assertThat(capacityField().isInvalid()).isFalse();
         assertEntriesKept("Lakeview", 30, "UC001 beamer");
         // Failure postconditions: no room stored, the registered room unchanged, no duplicate name
@@ -356,7 +358,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         fillForm(" lakeview ", 30, "UC001 beamer");
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RoomNameTakenException.MESSAGE);
         assertEntriesKept(" lakeview ", 30, "UC001 beamer");
         assertLakeviewUnchanged();
     }
@@ -373,7 +375,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
                 .param(NEW_NAME.toUpperCase()).update();
         save();
 
-        assertRejectedAt(nameField());
+        assertRejectedAt(nameField(), RoomNameTakenException.MESSAGE);
         assertEntriesKept(NEW_NAME, 12, "projector");
         // No two rooms have the same name; the competitor's room is unchanged
         assertThat(jdbcClient.sql("select capacity from room where lower(name) = lower(?)").param(NEW_NAME)
@@ -448,10 +450,11 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         return find(TextArea.class).withCaption("Equipment").single();
     }
 
-    private static void assertRejectedAt(com.vaadin.flow.component.HasValidation field) {
+    private static void assertRejectedAt(com.vaadin.flow.component.HasValidation field, String expectedMessage) {
         assertThat(field.isInvalid()).isTrue();
-        // OQ-002: the specification gives no wording for the message
-        assertThat(field.getErrorMessage()).isNotBlank();
+        // A2/A3 step 1: the field says what is wrong with it, the message of the violated rule
+        // (OQ-002: the specification fixes no wording, so the rule's message constant is the expected text)
+        assertThat(field.getErrorMessage()).isEqualTo(expectedMessage);
     }
 
     private void assertEntriesKept(String name, Integer capacity, String equipment) {

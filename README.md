@@ -1,7 +1,7 @@
 # Room Booking — Werkstatt test project
 
 A small meeting room booking application (Java 25, Spring Boot, Vaadin Flow, jOOQ, Flyway, PostgreSQL) that serves
-as the test project of the [AI Unified Process Werkstatt](https://github.com/AI-Unified-Process/marketplace/blob/change/werkstatt/docs/werkstatt.md).
+as the test project of the [AI Unified Process Werkstatt](https://github.com/AI-Unified-Process/marketplace/blob/main/docs/werkstatt.md).
 
 `main` holds the specification (`docs/`) and a runnable skeleton without any use case built. The use cases are
 written on a change branch, set to `Approved`, and built by the Werkstatt, which opens a pull request against that

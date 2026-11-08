@@ -9,7 +9,7 @@ history.
 **Element:** UC-002 A1
 **Raised by:** /use-case-implement, 2026-11-08
 **Blocking:** Yes
-**Status:** Open
+**Status:** Resolved
 
 A1 says the system shows "The room is already booked from <start> to <end>." and keeps every entry of the form,
 but it does not say where the message appears. UC-002 links NFR-001, which says rejected input "must be reported
@@ -21,15 +21,24 @@ Readings: (a) at the field "Start"; (b) at the field "End"; (c) at both "Start" 
 need NFR-001 to allow an exception for a rule that spans several fields. The reading decides what the UI shows
 and what the tests of A1 assert.
 
+**Answer:** At both fields "Start" and "End": the time slot is what collides, so both carry the message, as NFR-001 asks; every entry is kept.
+**Answered by:** Simon Martinelli, 2026-11-08
+**Resolved in:** UC-002 A1
+
+
 ## OQ-002: Which booking does the A1 message name when the time slot overlaps several bookings?
 
 **Element:** UC-002 A1
 **Raised by:** /use-case-implement, 2026-11-08
 **Blocking:** Yes
-**Status:** Open
+**Status:** Resolved
 
 A1 shows "The room is already booked from <start> to <end>." "with the start and end of the overlapping booking",
 which assumes exactly one. A long time slot can overlap two or more bookings of the same room.
 Readings: (a) the overlapping booking that starts first; (b) one message for each overlapping booking; (c) one
 message that covers the earliest start to the latest end of all overlapping bookings. The reading decides the text
 of the message and what the tests of A1 assert.
+
+**Answer:** The overlapping booking that starts first.
+**Answered by:** Simon Martinelli, 2026-11-08
+**Resolved in:** UC-002 A1

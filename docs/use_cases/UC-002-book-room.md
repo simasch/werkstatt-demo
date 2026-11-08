@@ -30,8 +30,8 @@
 **Trigger:** The time slot overlaps another booking of the same room (BR-002) (step 4)  
 **Flow:**
 
-1. System shows "The room is already booked from <start> to <end>." with the start and end of the overlapping
-   booking, and keeps every entry of the form.
+1. System shows "The room is already booked from <start> to <end>." at the fields "Start" and "End", with the start
+   and end of the overlapping booking that starts first, and keeps every entry of the form.
 2. Use case continues at step 3.
 
 ### A2: Invalid Entry

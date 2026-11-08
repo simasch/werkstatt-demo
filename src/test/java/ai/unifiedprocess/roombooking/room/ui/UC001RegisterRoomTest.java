@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -43,6 +44,19 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
     void removeCreatedRoom() {
         // Idempotent and targeted: a test may have failed before or after creating the room
         jdbcClient.sql("delete from room where lower(name) = lower(?)").param(NEW_ROOM_NAME).update();
+    }
+
+    @Test
+    @UseCase(id = "UC-001")
+    void choosing_rooms_in_the_main_menu_opens_the_room_list() {
+        navigate(RoomsView.class);
+
+        // Step 1: Office Manager chooses "Rooms" in the main menu — the @Menu(title = "Rooms")
+        // entry on RoomsView, rendered as a SideNavItem by MainLayout's SideNav
+        test(find(SideNav.class).single()).clickItem("Rooms");
+
+        assertThat(getCurrentView()).isInstanceOf(RoomsView.class);
+        assertThat(find(Grid.class).withId("room-grid").exists()).isTrue();
     }
 
     @Test

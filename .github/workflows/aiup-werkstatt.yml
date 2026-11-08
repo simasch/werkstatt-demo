@@ -13,11 +13,11 @@ permissions:
   pull-requests: write
 jobs:
   werkstatt:
-    uses: AI-Unified-Process/marketplace/.github/workflows/aiup-werkstatt.yml@main
+    uses: AI-Unified-Process/marketplace/.github/workflows/aiup-werkstatt.yml@change/werkstatt
     with:
       use_cases: ${{ inputs.use_cases }}
       correlation_id: ${{ inputs.correlation_id || github.run_id }}
-      engine_ref: main
+      engine_ref: change/werkstatt
       model: claude-opus-5-5
       # Opus costs more per use case than the default Sonnet; the budget per use case follows it
       max_cost_usd: "40"

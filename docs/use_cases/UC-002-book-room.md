@@ -7,7 +7,7 @@
 **Primary Actor:** Employee  
 **Goal:** Reserve a meeting room for a time slot.  
 **Trigger:** An employee needs a room for a meeting.  
-**Status:** Draft  
+**Status:** Approved  
 **Requirements:** [FR-004, FR-005, NFR-001](../requirements.md)
 
 ## Preconditions

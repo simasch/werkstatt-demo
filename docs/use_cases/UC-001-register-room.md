@@ -7,7 +7,7 @@
 **Primary Actor:** Office Manager  
 **Goal:** Make a new meeting room known to the system so that employees can book it.  
 **Trigger:** A meeting room has been set up in the office.  
-**Status:** Approved  
+**Status:** Tested  
 **Requirements:** [FR-001, FR-002, FR-003, NFR-001](../requirements.md)
 
 ## Preconditions

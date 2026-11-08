@@ -174,13 +174,16 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         navigate(RoomsView.class);
 
         openNewRoomDialog();
-        fillForm("", 5, "");
+        fillForm("", 5, "Projector");
         test(find(Button.class).id("save-room-button")).click();
 
         TextField nameField = find(TextField.class).id("room-name-field");
         assertThat(nameField.isInvalid()).isTrue();
         assertThat(nameField.getErrorMessage()).isEqualTo("Name is required.");
         assertThat(find(Dialog.class).exists()).isTrue();
+        // A2 / NFR-001: every other entry of the form is kept
+        assertThat(find(IntegerField.class).id("room-capacity-field").getValue()).isEqualTo(5);
+        assertThat(find(TextField.class).id("room-equipment-field").getValue()).isEqualTo("Projector");
     }
 
     @Test
@@ -190,6 +193,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
 
         openNewRoomDialog();
         test(find(IntegerField.class).id("room-capacity-field")).setValue(5);
+        test(find(TextField.class).id("room-equipment-field")).setValue("Projector");
         // A browser drops keystrokes past the field's maxLength (50 — the tester throws for this
         // reason): set the 51-character name through the component's Java API instead
         find(TextField.class).id("room-name-field").setValue("A".repeat(51));
@@ -199,6 +203,9 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         assertThat(nameField.isInvalid()).isTrue();
         assertThat(nameField.getErrorMessage()).isEqualTo("Name must be at most 50 characters.");
         assertThat(find(Dialog.class).exists()).isTrue();
+        // A2 / NFR-001: every other entry of the form is kept
+        assertThat(find(IntegerField.class).id("room-capacity-field").getValue()).isEqualTo(5);
+        assertThat(find(TextField.class).id("room-equipment-field").getValue()).isEqualTo("Projector");
     }
 
     @Test
@@ -208,6 +215,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
 
         openNewRoomDialog();
         test(find(TextField.class).id("room-name-field")).setValue(NEW_ROOM_NAME);
+        test(find(TextField.class).id("room-equipment-field")).setValue("Projector");
         test(find(Button.class).id("save-room-button")).click();
 
         IntegerField capacityField = find(IntegerField.class).id("room-capacity-field");
@@ -216,6 +224,9 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         assertThat(find(Dialog.class).exists()).isTrue();
         assertThat(jdbcClient.sql("select count(*) from room where name = ?")
                 .param(NEW_ROOM_NAME).query(Long.class).single()).isZero();
+        // A2 / NFR-001: every other entry of the form is kept
+        assertThat(find(TextField.class).id("room-name-field").getValue()).isEqualTo(NEW_ROOM_NAME);
+        assertThat(find(TextField.class).id("room-equipment-field").getValue()).isEqualTo("Projector");
     }
 
     @Test
@@ -225,6 +236,7 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
 
         openNewRoomDialog();
         test(find(TextField.class).id("room-name-field")).setValue(NEW_ROOM_NAME);
+        test(find(TextField.class).id("room-equipment-field")).setValue("Projector");
         // A browser commits a value outside min/max and marks the field invalid rather than blocking
         // the keystrokes, so the tester does the same
         test(find(IntegerField.class).id("room-capacity-field")).setValue(51);
@@ -236,6 +248,9 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         assertThat(find(Dialog.class).exists()).isTrue();
         assertThat(jdbcClient.sql("select count(*) from room where name = ?")
                 .param(NEW_ROOM_NAME).query(Long.class).single()).isZero();
+        // A2 / NFR-001: every other entry of the form is kept
+        assertThat(find(TextField.class).id("room-name-field").getValue()).isEqualTo(NEW_ROOM_NAME);
+        assertThat(find(TextField.class).id("room-equipment-field").getValue()).isEqualTo("Projector");
     }
 
     @Test
@@ -257,6 +272,9 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         assertThat(find(Dialog.class).exists()).isTrue();
         assertThat(jdbcClient.sql("select count(*) from room where name = ?")
                 .param(NEW_ROOM_NAME).query(Long.class).single()).isZero();
+        // A2 / NFR-001: every other entry of the form is kept
+        assertThat(find(TextField.class).id("room-name-field").getValue()).isEqualTo(NEW_ROOM_NAME);
+        assertThat(find(IntegerField.class).id("room-capacity-field").getValue()).isEqualTo(5);
     }
 
     @Test

@@ -8,7 +8,8 @@ import jakarta.validation.constraints.Size;
 
 /**
  * The entries of the room form (UC-001 step 5). The name is stripped of leading and trailing
- * spaces, and blank equipment is no equipment, before any rule is checked.
+ * spaces before any rule is checked; the equipment is kept as entered, and an empty equipment
+ * field is no equipment.
  */
 public record RegisterRoom(
         // UC-001 BR-003: The name is required; a name of spaces only counts as missing.
@@ -32,6 +33,6 @@ public record RegisterRoom(
     public RegisterRoom {
         // UC-001 BR-002: The room name is stored without leading or trailing spaces.
         name = name == null ? null : name.strip();
-        equipment = equipment == null || equipment.isBlank() ? null : equipment;
+        equipment = equipment == null || equipment.isEmpty() ? null : equipment;
     }
 }

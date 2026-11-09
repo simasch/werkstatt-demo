@@ -7,15 +7,16 @@
 **Primary Actor:** Employee  
 **Goal:** Book a room for a time slot so that the employee has a place for the meeting.  
 **Trigger:** Employee wants to book a room for a meeting.  
-**Status:** Draft
+**Status:** Approved
 
-**Requirements:** [FR-004, FR-005, NFR-001](../requirements.md)  
+**Requirements:** [FR-004, FR-005, NFR-001](../requirements.md)
+
 **Layers:** UI
 
 ## Preconditions
 
-_None — access control is out of scope for the first release, and the use case handles the case that no room is
-registered yet (A1)._
+
+_None — access control is out of scope for the first release, and the use case handles the case that no room is registered yet (A1)._
 
 ## Main Success Scenario
 
@@ -25,8 +26,7 @@ registered yet (A1)._
 4. System displays the booking form for the selected room together with its already booked time slots.
 5. Employee enters their name, the start and end time of the meeting, and, optionally, its purpose.
 6. Employee saves the booking.
-7. System checks the entries against BR-001 to BR-004 and stores the booking in one step, so that no other booking
-   of the room can take an overlapping time slot in between.
+7. System checks the entries against BR-001 to BR-004 and stores the booking in one step, so that no other booking of the room can take an overlapping time slot in between.
 8. System displays the confirmed booking among the room's booked time slots.
 
 ## Alternative Flows
@@ -41,8 +41,7 @@ registered yet (A1)._
 
 ### A2: Invalid Entry
 
-**Trigger:** The employee's name, the start time, or the end time is missing, the end time is not after the start
-time, or an entry is too long (step 7)  
+**Trigger:** The employee's name, the start time, or the end time is missing, the end time is not after the start time, or an entry is too long (step 7)  
 **Flow:**
 
 1. System reports at each offending field what is wrong with it.
@@ -51,8 +50,7 @@ time, or an entry is too long (step 7)
 
 ### A3: Overlapping Booking
 
-**Trigger:** Another booking of the same room overlaps the entered time slot, also one saved while the employee was
-entering the data (step 7)  
+**Trigger:** Another booking of the same room overlaps the entered time slot, also one saved while the employee was entering the data (step 7)  
 **Flow:**
 
 1. System reports that the room is already booked for an overlapping time slot.

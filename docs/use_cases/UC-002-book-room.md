@@ -96,7 +96,7 @@ exactly when another one of the same room ends does not overlap it.
 ### BR-003: Required Entries
 
 The room, the employee's name, the start time, and the end time are required. The purpose is optional free text,
-such as "Weekly sync".
+such as "Weekly sync". An employee's name that consists of spaces only counts as missing.
 
 ### BR-004: Maximum Lengths
 

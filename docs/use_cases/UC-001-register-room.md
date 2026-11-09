@@ -7,12 +7,14 @@
 **Primary Actor:** Office Manager  
 **Goal:** Register a meeting room with its name, capacity, and equipment so that employees can see and book it.  
 **Trigger:** The office manager wants to add a meeting room to the room list.  
-**Status:** Tested  
+**Status:** Approved
 
-**Requirements:** [FR-001, FR-002, FR-003, NFR-001](../requirements.md)  
+**Requirements:** [FR-001, FR-002, FR-003, NFR-001](../requirements.md)
+
 **Layers:** UI
 
 ## Preconditions
+
 
 _None — access control is out of scope for the first release, and no other use case must run first._
 
@@ -24,8 +26,7 @@ _None — access control is out of scope for the first release, and no other use
 4. System displays an empty room form.
 5. Office Manager enters the name and the capacity of the room and, optionally, its equipment.
 6. Office Manager saves the room.
-7. System checks the entries against BR-001 to BR-005 and stores the room in one step, so that no other room can
-   take the name in between.
+7. System checks the entries against BR-001 to BR-005 and stores the room in one step, so that no other room can take the name in between.
 8. System displays the new room in the room overview.
 
 ## Alternative Flows

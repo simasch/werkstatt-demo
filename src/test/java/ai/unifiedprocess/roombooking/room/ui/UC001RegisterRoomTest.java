@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import ai.unifiedprocess.roombooking.TestcontainersConfiguration;
+import ai.unifiedprocess.roombooking.booking.ui.BookRoomView;
 import ai.unifiedprocess.roombooking.room.domain.RoomListItem;
 import ai.unifiedprocess.roombooking.room.service.RegisterRoom;
 import ai.unifiedprocess.roombooking.room.service.RoomNameTakenException;
 import ai.unifiedprocess.roombooking.usecase.UseCase;
 import com.vaadin.browserless.SpringBrowserlessTest;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -158,6 +160,28 @@ class UC001RegisterRoomTest extends SpringBrowserlessTest {
         assertThat(find(Dialog.class).exists()).isFalse();
         assertThat(storedRooms(name)).containsExactly(Map.of(
                 "name", name, "capacity", 10, "equipment", equipment));
+    }
+
+    @Test
+    @UseCase(id = "UC-001")
+    void registered_room_can_be_booked_by_employees() {
+        navigate(RegisterRoomView.class);
+        fillForm(NEW_NAME, 12, "projector, whiteboard");
+        save();
+        assertThat(find(Dialog.class).exists()).isFalse();
+
+        // Success postcondition: employees can book the room (UC-002) — it is offered on the booking page
+        navigate(BookRoomView.class);
+        Grid<RoomListItem> rooms = grid();
+        int row = rowOf(rooms, NEW_NAME);
+        assertThat(row).isNotNegative();
+        assertThat(test(rooms).getCellText(row, 1)).isEqualTo("12");
+        assertThat(test(rooms).getCellText(row, 2)).isEqualTo("projector, whiteboard");
+
+        // and selecting it opens the booking form for it
+        rooms.select(test(rooms).getRow(row));
+        assertThat(find(DateTimePicker.class).withCaption("Start time").single().isVisible()).isTrue();
+        assertThat(find(DateTimePicker.class).withCaption("End time").single().isVisible()).isTrue();
     }
 
     // --- A1: No Room Registered Yet ---------------------------------------------------------

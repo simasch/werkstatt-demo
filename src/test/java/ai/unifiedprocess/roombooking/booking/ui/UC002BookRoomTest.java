@@ -7,6 +7,7 @@ import java.util.Map;
 
 import ai.unifiedprocess.roombooking.TestcontainersConfiguration;
 import ai.unifiedprocess.roombooking.booking.domain.BookedTimeSlot;
+import ai.unifiedprocess.roombooking.booking.service.RoomAlreadyBookedException;
 import ai.unifiedprocess.roombooking.room.domain.RoomListItem;
 import ai.unifiedprocess.roombooking.usecase.UseCase;
 import com.vaadin.browserless.SpringBrowserlessTest;
@@ -15,7 +16,6 @@ import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.AfterEach;
@@ -618,14 +618,16 @@ class UC002BookRoomTest extends SpringBrowserlessTest {
     }
 
     private void assertOverlapReported() {
-        // A3 step 1: the system reports that the room is already booked for an overlapping time slot
-        // (OQ-004: no fixed wording, no fixed place) — at a field of the form or in a notification
-        boolean atField = fields().stream()
-                .anyMatch(field -> field.isInvalid() && field.getErrorMessage() != null
-                        && !field.getErrorMessage().isBlank());
-        boolean notified = find(Notification.class).all().stream()
-                .anyMatch(notification -> !test(notification).getText().isBlank());
-        assertThat(atField || notified).as("overlap reported").isTrue();
+        // A3 step 1: the system reports that the room is already booked for an overlapping time slot.
+        // OQ-004 fixes no wording, so the test asserts the overlap message of the service (not any other
+        // error) at the fields of the time slot, start and end time.
+        assertThat(startField().isInvalid()).as("overlap reported at the start time").isTrue();
+        assertThat(startField().getErrorMessage()).isEqualTo(RoomAlreadyBookedException.MESSAGE);
+        assertThat(endField().isInvalid()).as("overlap reported at the end time").isTrue();
+        assertThat(endField().getErrorMessage()).isEqualTo(RoomAlreadyBookedException.MESSAGE);
+        // The name and purpose entries are not at fault
+        assertThat(nameField().isInvalid()).isFalse();
+        assertThat(purposeField().isInvalid()).isFalse();
     }
 
     private void assertEntriesKept(String name, LocalDateTime startsAt, LocalDateTime endsAt, String purpose) {

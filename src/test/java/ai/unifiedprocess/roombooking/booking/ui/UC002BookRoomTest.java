@@ -460,6 +460,35 @@ class UC002BookRoomTest extends SpringBrowserlessTest {
         assertNoOverlapInStudio();
     }
 
+    @Test
+    @UseCase(id = "UC-002", scenario = "A3: Overlapping Booking", businessRules = {"BR-002"},
+            requirements = {"NFR-001"})
+    void corrected_time_slot_is_saved_after_an_overlap_rejection() {
+        navigate(BookRoomView.class);
+        selectRoom(ROOM);
+        // Overlaps Alice's booking 09:00–10:00
+        fillForm(NAME, at(9, 30), at(10, 30), "Planning");
+        save();
+        assertOverlapReported();
+
+        // A3 step 3: the use case continues at step 5 — the employee moves the meeting to a free slot
+        test(startField()).setValue(at(10, 30));
+        test(endField()).setValue(at(11, 30));
+        save();
+
+        // No error remains at any field, also not the overlap reported before
+        assertNoErrors();
+        assertThat(storedBookings(NAME)).containsExactly(Map.of(
+                "room_id", studioId, "booked_by", NAME, "starts_at", at(10, 30), "ends_at", at(11, 30),
+                "purpose", "Planning"));
+        assertThat(shownSlots()).containsExactly(
+                slot("UC002 Alice", at(9, 0), at(10, 0), "Weekly sync"),
+                slot(NAME, at(10, 30), at(11, 30), "Planning"),
+                slot("UC002 Bob", at(13, 0), at(14, 0), null));
+        assertBookingsMadeBeforeUnchanged();
+        assertNoOverlapInStudio();
+    }
+
     // --- A4: Booking Cancelled --------------------------------------------------------------
 
     @Test

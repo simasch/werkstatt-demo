@@ -7,6 +7,7 @@ import java.util.Map;
 
 import ai.unifiedprocess.roombooking.TestcontainersConfiguration;
 import ai.unifiedprocess.roombooking.booking.domain.BookedTimeSlot;
+import ai.unifiedprocess.roombooking.booking.service.RoomAlreadyBookedException;
 import ai.unifiedprocess.roombooking.room.domain.RoomListItem;
 import ai.unifiedprocess.roombooking.usecase.UseCase;
 import com.vaadin.browserless.SpringBrowserlessTest;
@@ -15,7 +16,6 @@ import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.AfterEach;
@@ -460,6 +460,35 @@ class UC002BookRoomTest extends SpringBrowserlessTest {
         assertNoOverlapInStudio();
     }
 
+    @Test
+    @UseCase(id = "UC-002", scenario = "A3: Overlapping Booking", businessRules = {"BR-002"},
+            requirements = {"NFR-001"})
+    void corrected_time_slot_is_saved_after_an_overlap_rejection() {
+        navigate(BookRoomView.class);
+        selectRoom(ROOM);
+        // Overlaps Alice's booking 09:00–10:00
+        fillForm(NAME, at(9, 30), at(10, 30), "Planning");
+        save();
+        assertOverlapReported();
+
+        // A3 step 3: the use case continues at step 5 — the employee moves the meeting to a free slot
+        test(startField()).setValue(at(10, 30));
+        test(endField()).setValue(at(11, 30));
+        save();
+
+        // No error remains at any field, also not the overlap reported before
+        assertNoErrors();
+        assertThat(storedBookings(NAME)).containsExactly(Map.of(
+                "room_id", studioId, "booked_by", NAME, "starts_at", at(10, 30), "ends_at", at(11, 30),
+                "purpose", "Planning"));
+        assertThat(shownSlots()).containsExactly(
+                slot("UC002 Alice", at(9, 0), at(10, 0), "Weekly sync"),
+                slot(NAME, at(10, 30), at(11, 30), "Planning"),
+                slot("UC002 Bob", at(13, 0), at(14, 0), null));
+        assertBookingsMadeBeforeUnchanged();
+        assertNoOverlapInStudio();
+    }
+
     // --- A4: Booking Cancelled --------------------------------------------------------------
 
     @Test
@@ -618,14 +647,16 @@ class UC002BookRoomTest extends SpringBrowserlessTest {
     }
 
     private void assertOverlapReported() {
-        // A3 step 1: the system reports that the room is already booked for an overlapping time slot
-        // (OQ-004: no fixed wording, no fixed place) — at a field of the form or in a notification
-        boolean atField = fields().stream()
-                .anyMatch(field -> field.isInvalid() && field.getErrorMessage() != null
-                        && !field.getErrorMessage().isBlank());
-        boolean notified = find(Notification.class).all().stream()
-                .anyMatch(notification -> !test(notification).getText().isBlank());
-        assertThat(atField || notified).as("overlap reported").isTrue();
+        // A3 step 1: the system reports that the room is already booked for an overlapping time slot.
+        // OQ-004 fixes no wording, so the test asserts the overlap message of the service (not any other
+        // error) at the fields of the time slot, start and end time.
+        assertThat(startField().isInvalid()).as("overlap reported at the start time").isTrue();
+        assertThat(startField().getErrorMessage()).isEqualTo(RoomAlreadyBookedException.MESSAGE);
+        assertThat(endField().isInvalid()).as("overlap reported at the end time").isTrue();
+        assertThat(endField().getErrorMessage()).isEqualTo(RoomAlreadyBookedException.MESSAGE);
+        // The name and purpose entries are not at fault
+        assertThat(nameField().isInvalid()).isFalse();
+        assertThat(purposeField().isInvalid()).isFalse();
     }
 
     private void assertEntriesKept(String name, LocalDateTime startsAt, LocalDateTime endsAt, String purpose) {
